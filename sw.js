@@ -1,6 +1,5 @@
-const CACHE = 'quran-v62';
+const CACHE = 'quran-v62-1777596399';
 
-// Files to precache on install
 const PRECACHE = [
   '/',
   '/index.html',
@@ -17,10 +16,8 @@ const PRECACHE = [
   '/data/tadabbur_data.dat',
   '/data/page_map.dat',
   '/data/tafsir_manifest.dat'
-  // tafsir chunks (large) are cached on first use
 ];
 
-// Install: precache all critical assets
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE)
@@ -29,7 +26,6 @@ self.addEventListener('install', e => {
   );
 });
 
-// Activate: delete old caches
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys()
@@ -40,13 +36,9 @@ self.addEventListener('activate', e => {
   );
 });
 
-// Fetch: cache-first for assets, network-first for navigation
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
-
   const url = new URL(e.request.url);
-
-  // Cache-first strategy for static assets and data files
   if (
     url.pathname.startsWith('/assets/') ||
     url.pathname.startsWith('/data/') ||
@@ -56,30 +48,22 @@ self.addEventListener('fetch', e => {
       caches.match(e.request).then(cached => {
         if (cached) return cached;
         return fetch(e.request).then(resp => {
-          // Cache valid responses
-          // status 0 = opaque response (iOS Safari from cache, cross-origin)
           if (resp.ok || resp.status === 0) {
             const clone = resp.clone();
             caches.open(CACHE).then(c => c.put(e.request, clone));
           }
           return resp;
-        }).catch(() => cached); // fallback to cache if network fails
+        }).catch(() => cached);
       })
     );
     return;
   }
-
-  // Network-first for navigation (HTML pages)
   if (e.request.mode === 'navigate') {
     e.respondWith(
-      fetch(e.request).catch(() =>
-        caches.match('/index.html')
-      )
+      fetch(e.request).catch(() => caches.match('/index.html'))
     );
     return;
   }
-
-  // Default: stale-while-revalidate
   e.respondWith(
     caches.match(e.request).then(cached => {
       const fetchPromise = fetch(e.request).then(resp => {
