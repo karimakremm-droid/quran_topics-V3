@@ -1,4 +1,4 @@
-const CACHE = 'quran-v63-1777844552';
+const CACHE = 'quran-v63-1777932666';
 
 const PRECACHE = [
   '/',
