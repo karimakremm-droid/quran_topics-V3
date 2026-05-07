@@ -9436,7 +9436,7 @@ function aE({ query: e, onQueryChange: t, categories: n, ayahs: r, onGoToCategor
         const w = [];
         for (const [m, p] of Object.entries(r)) for (const [y, S] of p) {
           const E = S.trim();
-          if (E.startsWith(v + " ") || E === v) {
+          if (E.includes(v)) {
             const C = E.split(" "), k = C[C.length - 1];
             if (k.includes("-")) {
               const [j, L] = k.split("-").map(Number);
@@ -9456,7 +9456,7 @@ function aE({ query: e, onQueryChange: t, categories: n, ayahs: r, onGoToCategor
       const _sname = Ng(_surahIdx);
       for (const [c, b] of Object.entries(r)) {
         for (const [v, w] of b) {
-          if ((w.trim().startsWith(_sname + " ") || w.trim() === _sname) && !_seen.has(v)) {
+          if (w.trim().includes(_sname) && !_seen.has(v)) {
             a.push({ text: v, ref: w, catId: parseInt(c), catName: ((g = n[c]) == null ? void 0 : g[1]) || "", _score: 100 });
             _seen.add(v);
           }
